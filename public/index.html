@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>{{SITE}}</title>
+  <link rel="icon" type="image/png" href="/pngs/sitelogo.png"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+    body{background:#0d0a0a;color:#fff;font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden;}
+
+    #lo{position:fixed;inset:0;z-index:8000;background:#0d0a0a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .4s;}
+    #lo.out{opacity:0;pointer-events:none;}
+    .spin{width:34px;height:34px;border:3px solid rgba(220,38,38,.2);border-top:3px solid #dc2626;border-radius:50%;animation:spin .7s linear infinite;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    #lo-msg{font-size:.82rem;color:rgba(255,255,255,.35);font-weight:500;opacity:0;transition:opacity .5s;text-align:center;padding:0 20px;}
+    #lo-msg.show{opacity:1;}
+
+    .bg-canvas{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
+    .bg-blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:.4;animation:blobmove 12s ease-in-out infinite alternate;}
+    .bg-blob-1{width:600px;height:600px;background:radial-gradient(circle,#7f1d1d,transparent 70%);top:-10%;left:-10%;}
+    .bg-blob-2{width:500px;height:500px;background:radial-gradient(circle,#991b1b,transparent 70%);bottom:-15%;right:-10%;animation-delay:-4s;}
+    .bg-blob-3{width:350px;height:350px;background:radial-gradient(circle,#dc2626,transparent 70%);top:40%;left:50%;transform:translateX(-50%);animation-delay:-8s;opacity:.2;}
+    @keyframes blobmove{0%{transform:scale(1) translate(0,0);}50%{transform:scale(1.15) translate(20px,-20px);}100%{transform:scale(1) translate(-10px,10px);}}
+    .bg-grid{position:fixed;inset:0;z-index:0;opacity:.03;background-image:linear-gradient(rgba(255,255,255,.1) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.1) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;}
+
+    #nb-wrap{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;justify-content:center;padding:14px 20px 0;pointer-events:none;}
+    #nb{pointer-events:all;display:flex;align-items:center;justify-content:space-between;padding:0 18px 0 14px;height:52px;background:rgba(13,10,10,.4);backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);border:1px solid rgba(220,38,38,.18);border-radius:16px;width:100%;max-width:860px;gap:8px;box-shadow:0 4px 32px rgba(0,0,0,.3);}
+    .nbrand{display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0;}
+    .nbrand img{width:28px;height:28px;object-fit:contain;border-radius:7px;}
+    .nbrand-name{font-size:.98rem;font-weight:800;color:#fff;letter-spacing:-.2px;}
+    .nlinks{display:flex;align-items:center;gap:1px;}
+    .nlink{color:rgba(255,255,255,.55);font-size:.83rem;font-weight:500;text-decoration:none;padding:5px 11px;border-radius:7px;transition:color .15s,background .15s;white-space:nowrap;}
+    .nlink:hover{color:#fff;background:rgba(220,38,38,.12);}
+    .nright{display:flex;align-items:center;gap:7px;flex-shrink:0;}
+    .nbtn{display:inline-flex;align-items:center;gap:6px;border:none;border-radius:8px;padding:6px 14px;font-size:.82rem;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;transition:background .15s;text-decoration:none;white-space:nowrap;}
+    .nbtn-red{background:#dc2626;color:#fff;}.nbtn-red:hover{background:#b91c1c;}
+    .nham-area{display:none;align-items:center;gap:8px;}
+    .nham{display:flex;flex-direction:column;gap:5px;cursor:pointer;background:rgba(255,255,255,.08);border:1px solid rgba(220,38,38,.2);border-radius:7px;width:36px;height:36px;align-items:center;justify-content:center;padding:0;flex-shrink:0;}
+    .nham span{display:block;width:16px;height:2px;background:#fff;border-radius:2px;transition:transform .22s,opacity .22s;}
+    .nham.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+    .nham.open span:nth-child(2){opacity:0;}
+    .nham.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+    #mob{display:none;position:fixed;top:66px;left:0;right:0;z-index:190;background:rgba(13,10,10,.5);backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);border-bottom:1px solid rgba(220,38,38,.15);padding:12px 18px 20px;flex-direction:column;gap:2px;box-shadow:0 8px 32px rgba(0,0,0,.3);}
+    #mob.open{display:flex;}
+    .mlink{display:block;color:rgba(255,255,255,.6);font-size:.93rem;font-weight:500;padding:10px 12px;border-radius:7px;text-decoration:none;transition:background .13s,color .13s;}
+    .mlink:hover{background:rgba(220,38,38,.1);color:#fff;}
+    .mdiv{height:1px;background:rgba(220,38,38,.12);margin:8px 0;}
+    .mbtn{display:flex;align-items:center;gap:7px;border:none;border-radius:8px;padding:11px 16px;font-size:.92rem;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;width:100%;margin-top:4px;text-decoration:none;justify-content:center;}
+    .mbtn-red{background:#dc2626;color:#fff;}
+    @media(max-width:700px){#nb-wrap{padding:10px 10px 0;}#nb{padding:0 12px 0 10px;border-radius:12px;max-width:100%;}.nlinks,.nright{display:none;}.nham-area{display:flex;}}
+
+    .an{opacity:0;transform:translateY(20px);transition:opacity .52s ease,transform .52s ease;}
+    .an.in{opacity:1;transform:none;}
+    .d1{transition-delay:.07s;}.d2{transition-delay:.14s;}.d3{transition-delay:.21s;}
+
+    .hero{position:relative;z-index:1;min-height:100vh;display:flex;align-items:center;padding:100px 40px 40px;max-width:1200px;margin:0 auto;gap:60px;}
+    .hero-left{flex:1;max-width:540px;}
+    .hero-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(220,38,38,.12);border:1px solid rgba(220,38,38,.3);border-radius:50px;padding:5px 14px;font-size:.78rem;font-weight:600;color:#fca5a5;margin-bottom:24px;}
+    .hero-badge img{width:15px;height:15px;object-fit:contain;}
+    .hero-title{font-size:clamp(2.1rem,4.8vw,3.6rem);font-weight:900;line-height:1.07;margin-bottom:6px;letter-spacing:-1.5px;color:#fff;}
+    .cursor{display:inline-block;width:3px;height:.85em;background:#dc2626;margin-left:1px;vertical-align:middle;animation:blink .8s step-end infinite;}
+    @keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+    .hero-sub{color:rgba(255,255,255,.5);font-size:1rem;line-height:1.75;margin-bottom:34px;max-width:460px;}
+    .hero-btns{display:flex;gap:10px;flex-wrap:wrap;}
+    .hbtn{display:inline-flex;align-items:center;gap:7px;border:none;border-radius:10px;padding:13px 26px;font-size:.95rem;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;transition:background .15s,transform .1s,box-shadow .15s;text-decoration:none;}
+    .hbtn:hover{transform:translateY(-2px);}
+    .hbtn-red{background:#dc2626;color:#fff;box-shadow:0 4px 24px rgba(220,38,38,.35);}.hbtn-red:hover{background:#b91c1c;box-shadow:0 6px 32px rgba(220,38,38,.5);}
+    .hero-right{position:relative;z-index:1;flex:1;display:flex;align-items:center;justify-content:center;max-width:480px;opacity:0;transform:translateY(20px);transition:opacity .6s ease .35s,transform .6s ease .35s;}
+    .hero-right.in{opacity:1;transform:none;}
+    .hero-right img{width:100%;max-width:420px;object-fit:contain;filter:drop-shadow(0 20px 60px rgba(220,38,38,.3)) drop-shadow(0 0 80px rgba(248,113,113,.15));}
+    .hero-right.floating img{animation:fl 4s ease-in-out infinite;}
+    @keyframes fl{0%,100%{transform:translateY(0);}50%{transform:translateY(-18px);}}
+
+    .sec-wrap{position:relative;z-index:1;}
+    .div{height:1px;background:rgba(220,38,38,.1);max-width:1200px;margin:0 auto;position:relative;z-index:1;}
+    .sec{padding:80px 40px;max-width:1200px;margin:0 auto;}
+    .sec-hdr{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin-bottom:38px;flex-wrap:wrap;}
+    .sec-label{font-size:.72rem;font-weight:800;color:#f87171;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:7px;}
+    .sec-title{font-size:clamp(1.45rem,2.6vw,2.1rem);font-weight:800;letter-spacing:-.5px;color:#fff;}
+    .sec-right{font-size:.88rem;color:rgba(255,255,255,.3);max-width:240px;text-align:right;line-height:1.6;}
+
+    .agrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;}
+    .acard{background:rgba(220,38,38,.04);border:1px solid rgba(220,38,38,.12);border-radius:14px;padding:22px;transition:box-shadow .18s,transform .18s,background .18s;}
+    .acard:hover{background:rgba(220,38,38,.08);transform:translateY(-2px);box-shadow:0 8px 32px rgba(220,38,38,.15);}
+    .acard-icon{width:36px;height:36px;object-fit:contain;margin-bottom:12px;display:block;}
+    .acard-title{font-size:.92rem;font-weight:700;margin-bottom:5px;color:#fff;}
+    .acard-desc{font-size:.83rem;color:rgba(255,255,255,.4);line-height:1.6;}
+
+    .tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:13px;}
+    .tcard{background:rgba(220,38,38,.04);border:1px solid rgba(220,38,38,.12);border-radius:14px;padding:18px 16px;position:relative;transition:box-shadow .18s,transform .18s,background .18s;will-change:transform;}
+    .tcard:hover{background:rgba(220,38,38,.08);transform:translateY(-2px);box-shadow:0 8px 32px rgba(220,38,38,.15);}
+    .trole{position:absolute;top:14px;right:14px;background:rgba(220,38,38,.15);color:#fca5a5;border-radius:5px;padding:2px 9px;font-size:.73rem;font-weight:700;}
+    .trow{display:flex;align-items:center;gap:10px;margin-bottom:4px;}
+    .tav{width:48px;height:48px;border-radius:50%;object-fit:cover;flex-shrink:0;border:2px solid rgba(220,38,38,.2);}
+    .tname{font-size:.95rem;font-weight:700;color:#fff;line-height:1.2;}
+    .thandle{font-size:.78rem;color:rgba(255,255,255,.35);margin-top:1px;}
+    .tdesc{font-size:.8rem;color:rgba(255,255,255,.4);margin-top:10px;line-height:1.55;}
+
+    .sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:13px;}
+    .scard{background:rgba(220,38,38,.04);border:1px solid rgba(220,38,38,.12);border-radius:14px;padding:22px 16px;text-align:center;transition:box-shadow .18s,transform .18s,background .18s;}
+    .scard:hover{background:rgba(220,38,38,.08);transform:translateY(-2px);box-shadow:0 8px 32px rgba(220,38,38,.15);}
+    .sval{font-size:2rem;font-weight:900;color:#ef4444;}
+    .slabel{font-size:.78rem;color:rgba(255,255,255,.35);margin-top:4px;}
+
+    footer{position:relative;z-index:1;background:rgba(0,0,0,.4);border-top:1px solid rgba(220,38,38,.1);padding:20px 40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+    .fbrand{display:flex;align-items:center;gap:7px;flex:1;}
+    .fbrand img{width:24px;height:24px;border-radius:6px;object-fit:contain;}
+    .fbrand span{font-size:.88rem;font-weight:800;color:#fff;}
+    .fcopy{font-size:.78rem;color:rgba(255,255,255,.25);flex:1;text-align:center;}
+    .footer-links{display:flex;align-items:center;gap:8px;flex:1;justify-content:flex-end;}
+    .footer-discord{display:inline-flex;align-items:center;gap:5px;background:rgba(88,101,242,.12);border:1px solid rgba(88,101,242,.25);border-radius:7px;padding:4px 10px;font-size:.73rem;font-weight:600;color:#818cf8;text-decoration:none;transition:background .15s;}
+    .footer-discord:hover{background:rgba(88,101,242,.22);}
+    @media(max-width:900px){.hero{flex-direction:column;padding:80px 20px 40px;gap:0;}.hero-left{max-width:100%;}.hero-right{max-width:280px;margin-top:36px;}.sec{padding:56px 20px;}.sec-right{text-align:left;}footer{flex-direction:column;align-items:center;padding:16px 20px;gap:10px;}.fbrand,.fcopy,.footer-links{flex:none;}.fbrand,.fcopy{justify-content:center;text-align:center;}.footer-links{justify-content:center;flex-wrap:wrap;}}
+    @media(max-width:480px){.hero-btns{flex-direction:column;}.hbtn{justify-content:center;}}
+  </style>
+</head>
+<body>
+<div class="bg-canvas"><div class="bg-blob bg-blob-1"></div><div class="bg-blob bg-blob-2"></div><div class="bg-blob bg-blob-3"></div></div>
+<div class="bg-grid"></div>
+<div id="lo"><div class="spin"></div><div id="lo-msg">Yükleniyor...</div></div>
+
+<div id="nb-wrap"><nav id="nb">
+  <a href="/" class="nbrand"><img src="/pngs/sitelogo.png" alt=""/><span class="nbrand-name" id="nav-name">{{SITE}}</span></a>
+  <div class="nlinks">
+    <a href="#about" class="nlink">Hakkımızda</a>
+    <a href="#stats" class="nlink">İstatistikler</a>
+    <a href="#team" class="nlink">Ekip</a>
+  </div>
+  <div class="nright">
+    <a href="{{DISCORD_INVITE}}" target="_blank" class="nbtn nbtn-red" id="discord-btn">Discord'a Katıl</a>
+  </div>
+  <div class="nham-area">
+    <button class="nham" id="nham" onclick="toggleMob()"><span></span><span></span><span></span></button>
+  </div>
+</nav></div>
+<div id="mob">
+  <a href="#about" class="mlink" onclick="closeMob()">Hakkımızda</a>
+  <a href="#stats" class="mlink" onclick="closeMob()">İstatistikler</a>
+  <a href="#team" class="mlink" onclick="closeMob()">Ekip</a>
+  <div class="mdiv"></div>
+  <a href="{{DISCORD_INVITE}}" target="_blank" class="mbtn mbtn-red" id="discord-btn-mob" onclick="closeMob()">Discord'a Katıl</a>
+</div>
+
+<section class="hero" id="home">
+  <div class="hero-left">
+    <div class="hero-badge an"><img src="/pngs/tr.png" alt="TR"/><span id="hero-badge-text">{{HERO_BADGE}}</span></div>
+    <h1 class="hero-title an d1"><span id="typing-chars"></span><span class="cursor"></span></h1>
+    <h1 class="hero-title an d1" style="color:#ef4444;margin-top:0" id="hero-sub-title">{{HERO_SUB_TITLE}}</h1>
+    <p class="hero-sub an d2" id="hero-desc">{{HERO_DESC}}</p>
+    <div class="hero-btns an d3">
+      <a href="{{DISCORD_INVITE}}" target="_blank" class="hbtn hbtn-red" id="hero-btn-main">{{HERO_BTN}}</a>
+    </div>
+  </div>
+  <div class="hero-right" id="hright"><img src="/pngs/hero.png" alt="" onerror="this.style.display='none'"/></div>
+</section>
+
+<div class="sec-wrap">
+<div class="div"></div>
+<section class="sec" id="about">
+  <div class="sec-hdr an">
+    <div><div class="sec-label">Hakkımızda</div><div class="sec-title" id="about-title">{{ABOUT_TITLE}}</div></div>
+    <div class="sec-right" id="about-sub">{{ABOUT_SUB}}</div>
+  </div>
+  <div class="agrid">
+    <div class="acard an d1">
+      <img class="acard-icon" src="/pngs/card1.png" alt=""/>
+      <div class="acard-title" id="card1-title">{{CARD1_TITLE}}</div>
+      <div class="acard-desc" id="card1-desc">{{CARD1_DESC}}</div>
+    </div>
+    <div class="acard an d2">
+      <img class="acard-icon" src="/pngs/card2.png" alt=""/>
+      <div class="acard-title" id="card2-title">{{CARD2_TITLE}}</div>
+      <div class="acard-desc" id="card2-desc">{{CARD2_DESC}}</div>
+    </div>
+    <div class="acard an d3">
+      <img class="acard-icon" src="/pngs/card3.png" alt=""/>
+      <div class="acard-title" id="card3-title">{{CARD3_TITLE}}</div>
+      <div class="acard-desc" id="card3-desc">{{CARD3_DESC}}</div>
+    </div>
+  </div>
+</section>
+
+<div class="div"></div>
+<section class="sec" id="stats">
+  <div class="sec-hdr an">
+    <div><div class="sec-label">İstatistikler</div><div class="sec-title">Platform Verileri</div></div>
+  </div>
+  <div class="sgrid">
+    <div class="scard an d1"><div class="sval" id="s1">{{STAT1_VALUE}}</div><div class="slabel" id="s1l">{{STAT1_LABEL}}</div></div>
+    <div class="scard an d2"><div class="sval" id="s2">{{STAT2_VALUE}}</div><div class="slabel" id="s2l">{{STAT2_LABEL}}</div></div>
+    <div class="scard an d3"><div class="sval" id="s3">{{STAT3_VALUE}}</div><div class="slabel" id="s3l">{{STAT3_LABEL}}</div></div>
+  </div>
+</section>
+
+<div class="div"></div>
+<section class="sec" id="team">
+  <div class="sec-hdr an">
+    <div><div class="sec-label">Ekip</div><div class="sec-title">Ekiple Tanış</div></div>
+    <div class="sec-right">Topluluğu kuran ve yöneten ekibimiz.</div>
+  </div>
+  <div class="tgrid" id="tgrid"><div style="color:rgba(255,255,255,.3);font-size:.9rem;padding:8px 0">Yükleniyor...</div></div>
+</section>
+</div>
+
+<footer>
+  <div class="fbrand"><img src="/pngs/sitelogo.png" alt=""/><span id="fname">{{SITE}}</span></div>
+  <div class="fcopy" id="fcopy">© 2026 {{SITE}} — Tüm hakları saklıdır.</div>
+  <div class="footer-links">
+    <a href="{{DISCORD_INVITE}}" target="_blank" id="footer-discord" class="footer-discord">
+      <img src="/pngs/discord.png" style="width:13px;height:13px;object-fit:contain" alt=""/>
+      <span>Discord</span>
+    </a>
+  </div>
+</footer>
+
+<script>
+const SITE_NAME = "{{SITE}}";
+const DISCORD_INVITE = "{{DISCORD_INVITE}}";
+
+function updateConfig(cfg) {
+  document.getElementById("nav-name").textContent = cfg.siteName;
+  document.getElementById("fname").textContent = cfg.siteName;
+  document.getElementById("fcopy").textContent = `© 2026 ${cfg.siteName} — Tüm hakları saklıdır.`;
+
+  const inv = cfg.discordInvite || "/";
+  ["discord-btn","discord-btn-mob","footer-discord","hero-btn-main"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el?.tagName === "A") el.href = inv;
+  });
+
+  if (cfg.heroBadge) document.getElementById("hero-badge-text").textContent = cfg.heroBadge;
+  if (cfg.heroSubTitle) document.getElementById("hero-sub-title").textContent = cfg.heroSubTitle;
+  if (cfg.heroDesc) document.getElementById("hero-desc").textContent = cfg.heroDesc;
+  if (cfg.heroBtn) document.getElementById("hero-btn-main").textContent = cfg.heroBtn;
+  if (cfg.aboutTitle) document.getElementById("about-title").textContent = cfg.aboutTitle;
+  if (cfg.aboutSub) document.getElementById("about-sub").textContent = cfg.aboutSub;
+
+  for (let i = 1; i <= 3; i++) {
+    const t = document.getElementById(`card${i}-title`);
+    const d = document.getElementById(`card${i}-desc`);
+    if (t && cfg[`card${i}Title`]) t.textContent = cfg[`card${i}Title`];
+    if (d && cfg[`card${i}Desc`]) d.textContent = cfg[`card${i}Desc`];
+  }
+}
+
+function toggleMob() {
+  const m = document.getElementById("mob"), h = document.getElementById("nham");
+  const open = m.classList.contains("open");
+  m.classList.toggle("open", !open);
+  h.classList.toggle("open", !open);
+}
+function closeMob() {
+  document.getElementById("mob").classList.remove("open");
+  document.getElementById("nham")?.classList.remove("open");
+}
+
+const PHRASES = ["{{TYPING1}}","{{TYPING2}}"];
+let pIdx = 0, cIdx = 0, deleting = false;
+const CDELAY = 90, DDELAY = 50, PAUSE = 4500, PBEFORE = 300;
+
+function typeStep() {
+  const el = document.getElementById("typing-chars");
+  const phrase = PHRASES[pIdx];
+  if (!deleting) {
+    el.textContent = phrase.slice(0, cIdx + 1);
+    cIdx++;
+    if (cIdx === phrase.length) { setTimeout(() => { deleting = true; typeStep(); }, PAUSE); return; }
+  } else {
+    el.textContent = phrase.slice(0, cIdx - 1);
+    cIdx--;
+    if (cIdx === 0) { deleting = false; pIdx = (pIdx + 1) % PHRASES.length; setTimeout(typeStep, PBEFORE); return; }
+  }
+  setTimeout(typeStep, deleting ? DDELAY : CDELAY);
+}
+
+function initScrollAnim() {
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); obs.unobserve(e.target); } });
+  }, { threshold: .1 });
+  document.querySelectorAll(".an").forEach(el => obs.observe(el));
+}
+
+async function loadTeam() {
+  const grid = document.getElementById("tgrid");
+  try {
+    const data = await (await fetch("/api/team")).json();
+    if (!data.members?.length) { grid.innerHTML = '<div style="color:rgba(255,255,255,.3)">Ekip üyesi bulunamadı.</div>'; return; }
+    grid.innerHTML = data.members.map((m, i) => `
+      <div class="tcard" style="opacity:0;transform:translateY(20px);transition:opacity .5s ease ${i * .07}s,transform .5s ease ${i * .07}s,box-shadow .18s,background .18s;">
+        <span class="trole">${m.tur || "Üye"}</span>
+        <div class="trow">
+          <img class="tav" src="${m.avatar || "https://cdn.discordapp.com/embed/avatars/0.png"}" alt="" onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'"/>
+          <div>
+            <div class="tname">${m.displayName || m.username || "—"}</div>
+            <div class="thandle">@${m.username || "—"}</div>
+          </div>
+        </div>
+        ${m.description ? `<div class="tdesc">${m.description}</div>` : ""}
+        <div style="display:flex;gap:7px;margin-top:10px;">
+          <a href="https://discord.com/users/${m.id}" target="_blank" style="display:inline-flex;align-items:center;gap:5px;font-size:.72rem;font-weight:600;color:#818cf8;background:rgba(88,101,242,.12);border:1px solid rgba(88,101,242,.25);border-radius:7px;padding:4px 10px;text-decoration:none;transition:background .15s" onmouseover="this.style.background='rgba(88,101,242,.22)'" onmouseout="this.style.background='rgba(88,101,242,.12)'">
+            <img src="/pngs/discord.png" style="width:12px;height:12px;object-fit:contain;opacity:.85" alt=""/>Discord
+          </a>
+          ${m.roblox_id ? `<a href="https://www.roblox.com/tr/users/${m.roblox_id}/profile" target="_blank" style="display:inline-flex;align-items:center;gap:5px;font-size:.72rem;font-weight:600;color:rgba(255,255,255,.5);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:4px 10px;text-decoration:none;transition:background .15s" onmouseover="this.style.color='#fff';this.style.background='rgba(255,255,255,.1)'" onmouseout="this.style.color='rgba(255,255,255,.5)';this.style.background='rgba(255,255,255,.05)'">
+            <img src="/pngs/roblox.png" style="width:12px;height:12px;object-fit:contain;opacity:.85" alt=""/>Roblox
+          </a>` : ""}
+        </div>
+      </div>`).join("");
+    setTimeout(() => {
+      document.querySelectorAll(".tcard").forEach(el => { el.style.opacity = "1"; el.style.transform = "translateY(0)"; });
+    }, 50);
+  } catch(e) {
+    grid.innerHTML = '<div style="color:rgba(255,255,255,.3)">Ekip yüklenemedi.</div>';
+  }
+}
+
+(async () => {
+  const loTimer = setTimeout(() => document.getElementById("lo-msg").classList.add("show"), 4000);
+  try {
+    const cfg = await (await fetch("/api/config")).json();
+    updateConfig(cfg);
+  } catch(e) {}
+  clearTimeout(loTimer);
+  setTimeout(() => document.getElementById("lo").classList.add("out"), 300);
+
+  initScrollAnim();
+  setTimeout(() => {
+    const hr = document.getElementById("hright");
+    hr.classList.add("in");
+    setTimeout(() => hr.classList.add("floating"), 680);
+  }, 300);
+  typeStep();
+  loadTeam();
+
+  try {
+    const st = await (await fetch("/api/stats")).json();
+    if (st.stat1Value) { document.getElementById("s1").textContent = st.stat1Value; document.getElementById("s1l").textContent = st.stat1Label; }
+    if (st.stat2Value) { document.getElementById("s2").textContent = st.stat2Value; document.getElementById("s2l").textContent = st.stat2Label; }
+    if (st.stat3Value) { document.getElementById("s3").textContent = st.stat3Value; document.getElementById("s3l").textContent = st.stat3Label; }
+  } catch(e) {}
+})();
+</script>
+</body>
+</html>
